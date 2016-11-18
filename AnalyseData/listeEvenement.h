@@ -15,7 +15,7 @@ typedef struct listeEvenementStruct
 
 listeEvenement newListeEvenement();
 
-listeEvenement addFinListeEvenement(listeEvenement,evenement);
+listeEvenement addFinListeEvenement(listeEvenement l,evenement e);
 
 void printListeEvenement(listeEvenement);
 

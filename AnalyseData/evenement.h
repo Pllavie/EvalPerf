@@ -16,7 +16,7 @@ typedef struct evenementStruct
 	int s;//Numéro du noeud source
 	int d;//Numéro du noeud destination
 	int pos;//Si code == 0|1|3|4 alors pos représente le noeud dans lequel de trouve le paquet
-			//Sinon code == 2 et pos représente le prochaine saut
+			//Sinon code == 2 et pos représente le prochain saut
 }*evenement;
 
 evenement newEvenement(float,int,unsigned long,int,int,int,int);

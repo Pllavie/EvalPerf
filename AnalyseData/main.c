@@ -1,37 +1,12 @@
 #include "matriceStats.h"
 #include "listeEvenement.h"
+#include "argAnalyseur.h"
 #include "analyseur.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <argp.h>
 
-/*
-
-	float t;//Temps t >= 0
-	int code;//0-> départ de la source , 1 -> arrivée dans un noeud intermédiaire, 2 -> départ d'une file d'attente
-			//3 -> arrivée à destination, 4 -> destruction du paquet(dû uniquement à de la congestion)
-	unsigned long pid;//Id du paquet
-	int fid;//Id du flux du paquet
-	int s;//Numéro du noeud source
-	int d;//Numéro du noeud destination
-	int pos;//Si code == 0|1|3|4 alors pos représente le noeud dans lequel de trouve le paquet
-			//Sinon code == 2 et pos représente le prochaine saut
-
-
-t code pid fid tos <bif> s d pos
-(float t,int c,unsigned long p,int f,int s,int d,int pos)
-
-typedef struct 
-{
-    float t;//Temps t >= 0
-    int code;//0-> départ de la source , 1 -> arrivée dans un noeud intermédiaire, 2 -> départ d'une file d'attente
-            //3 -> arrivée à destination, 4 -> destruction du paquet(dû uniquement à de la congestion)
-    unsigned long pid;//Id du paquet
-    int fid;//Id du flux du paquet
-    int s;//Numéro du noeud source
-    int d;//Numéro du noeud destination
-    int pos;//Si code == 0|1|3|4 alors pos représente le noeud dans lequel de trouve le paquet
-            //Sinon code == 2 et pos représente le prochaine saut
-}*evenement;
-*/
-int main()
+int main(int argc, char **argv)
 {
 FILE * fp;
 char buf[50];
@@ -39,7 +14,21 @@ float t;
 int i=0,code,so,d,fid,tos,bif,pos;
 unsigned long pid;
 evenement e;
-analyseur a = newAnalyseur();
+argAnalyseur argAnalyseur = newArgAnalyseur();
+
+if (remplirArg(argAnalyseur,argc,argv)==-1){
+  printf("Erreur dans les options de l'analyseur : verboseFlag = %d tailleFenetre = %d \n",argAnalyseur->verboseFlag,argAnalyseur->tailleFenetre);
+  printf("Usage : ./analyse.out (Lance l'éxécutable avec une fenêtre de taille 1024 et verbose à false)\n");
+  printf("Usage : ./analyse.out -v (Lance l'éxécutable avec une fenêtre de taille 1024 et verbose à true)\n");
+  printf("Usage : ./analyse.out -f TAILLE_FENETRE (Lance l'éxécutable avec une fenêtre de taille TAILLE_FENETRE)\n");
+  printf("Commandes : -v : verbose -f TAILLE_FENETRE \n");
+  exit(-1);
+}
+
+printf ("verboseFlag = %d, fenetreValue = %d\n",argAnalyseur->verboseFlag, argAnalyseur->tailleFenetre);
+
+
+analyseur a = newAnalyseur(argAnalyseur->tailleFenetre);
 
 fp = fopen("trace2650.txt", "r");
 if (fp == NULL)
@@ -63,9 +52,11 @@ while (fgets(buf, sizeof buf, fp) != NULL)
   addEvenementAnalyseur(a,e);
   i++;
 }
+
 fclose(fp);
-printStats(a->stats,1);
-printAnalyseur(a,1);
+printStats(a->stats,argAnalyseur->verboseFlag);
+//printAnalyseur(a,0);
 freeAnalyseur(a);
+
 exit(EXIT_SUCCESS);
 }

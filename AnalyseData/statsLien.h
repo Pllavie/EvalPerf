@@ -46,12 +46,11 @@ typedef struct statsLienStruct
 	int dest;
 	int nombrePaquetsRecus;
 	int nombrePaquetsEmis;
-	int nombrePaquetsTraites;
+	int nombrePaquetsTraites;//Un paquet traité est un paquet redirigé mais pas émis ou reçu. 
 	int NombrePaquetsPerdus;
-	float delaiMoyenBoutEnBout;
-	float tempsAttenteMoyenLien;
+	float delaiMoyenBoutEnBout;//Le delaiMoyenBoutEnBout est égal à la différence entre la réception et l'émission
+	float tempsAttenteMoyenLien;//Le tempsAttenteMoyenLien est égal à la différence entre les temps des événements de code 0|1 et 2
 	float tempsTransmissionLien;
-	float tailleFileAttente;
 }*statsLien;
 
 statsLien newStatsLien(int,int);

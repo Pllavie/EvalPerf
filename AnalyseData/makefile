@@ -6,13 +6,13 @@
 
 # Variables
 CC = gcc 										
-PROJECT = analyse#Le nom du projet
-TYPE = .out 									#Le type de l'executable final (exe, out, ...)
+PROJECT = analyse
+TYPE = .out 
 BIN = $(PROJECT)$(TYPE)							
 DOUT = 											
-OBJS = main.o evenement.o  matriceStats.o statsLien.o listeEvenement.o analyseur.o
+OBJS = main.o evenement.o  matriceStats.o statsLien.o listeEvenement.o analyseur.o listeListeEvenement.o argAnalyseur.o
 SRC =											
-DEPS = evenement.h matriceStats.h statsLien.h listeEvenement.h analyseur.h
+DEPS = evenement.h matriceStats.h statsLien.h listeEvenement.h analyseur.h listeListeEvenement.h argAnalyseur.h
 CFLAGS = -W -Wall								
 LDFLAGS =										
 

@@ -17,7 +17,6 @@ statsLien newStatsLien(int s,int d)
 	res->delaiMoyenBoutEnBout = 0.0;
 	res->tempsAttenteMoyenLien = 0.0;
 	res->tempsTransmissionLien = 0.0;
-	res->tailleFileAttente = 0.0;
 	return res;
 }
 
@@ -30,9 +29,9 @@ void printStatsLien(statsLien s)
 	s->tempsTransmissionLien /= (float) s->nombrePaquetsEmis;
 	}
 	printf("lien : (%d,%d) nombrePaquetsRecus : %d nombrePaquetsEmis : %d nombrePaquetsTraites : %d NombrePaquetsPerdus :%d \n"
-		"delaiMoyenBoutEnBout : %.5f tempsAttenteMoyenLien : %.5f tempsTransmissionLien : %.5f tailleFileAttente : %.5f\n",
+		"delaiMoyenBoutEnBout : %.5f tempsAttenteMoyenLien : %.5f tempsTransmissionLien : %.5f\n",
 		s->source,s->dest,s->nombrePaquetsRecus,s->nombrePaquetsEmis,s->nombrePaquetsTraites,
-		s->NombrePaquetsPerdus,s->delaiMoyenBoutEnBout,s->tempsAttenteMoyenLien,s->tempsTransmissionLien,s->tailleFileAttente);
+		s->NombrePaquetsPerdus,s->delaiMoyenBoutEnBout,s->tempsAttenteMoyenLien,s->tempsTransmissionLien);
 }
 
 void freeStatsLien(statsLien s)

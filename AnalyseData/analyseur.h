@@ -2,16 +2,17 @@
 #define ANALYSEUR_H
 #include "statsLien.h"
 #include "listeEvenement.h"
+#include "listeListeEvenement.h"
 #include "matriceStats.h"
-#define TAILLE_FENETRE 1000000
 
 typedef struct analyseurStruct{
 	int option;
-	listeEvenement fenetreEvenement[TAILLE_FENETRE];
+	int tailleFenetre;
+	listeListeEvenement* fenetreEvenement;
 	stats stats;
 }*analyseur;
 
-analyseur newAnalyseur();
+analyseur newAnalyseur(int tailleFenetre);
 
 void addEvenementAnalyseur(analyseur a,evenement e);
 

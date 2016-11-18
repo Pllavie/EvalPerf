@@ -81,7 +81,7 @@ void printStats(stats s,int verbose)
 		}
 		printf("Noeud %d perte = %f\n",indice,perteMax);
 		s->localisationPertes[indice]=-1;
-	}
+}
 }
 
 void printMatriceStatsLien(stats s,int i,int j)
@@ -112,12 +112,15 @@ void ajoutListeEvenementStats(stats s,listeEvenement l)
 	else{
 		if (l->e->code!=0)
 		{
-			fprintf(stderr,"Erreur dans ajoutListeEvenementStats la liste ne commence pas par un élément de code 0");
+			fprintf(stderr,"Erreur dans ajoutListeEvenementStats la liste ne commence pas par un élément de code 0\n");
+			printListeEvenement(l);
 			exit(-1);
 		}
 		listeEvenement temp = l;
 		float tempsCreationPaquet = l->e->t;
 		float tempArriveePaquet;
+		float tempsAttenteMoyenLien;
+		int lastPos=l->e->pos;
 		int source = l->e->s;
 		int dest = l->e->d;
 
@@ -127,13 +130,14 @@ void ajoutListeEvenementStats(stats s,listeEvenement l)
 			if(temp->next!=NULL)
 				{
 					evenement nextPaquet = temp->next->e;
-					if ((paquet->code == 0 && nextPaquet->code==2)||(paquet->code ==1 && nextPaquet->code==2))//Incrementation du tempsAttenteMoyenLien
+					if ((paquet->code == 0 ||paquet->code == 1)&&(nextPaquet->code==2))//Incrementation du tempsAttenteMoyenLien
 					{
-						s->matriceStats[source][dest]->tempsAttenteMoyenLien += nextPaquet->t - paquet->t;
+						s->matriceStats[paquet->pos][nextPaquet->pos]->tempsAttenteMoyenLien += nextPaquet->t - paquet->t;
 					}
-					if (paquet->code == 2 && nextPaquet->code==1)//Incrementation du tempsTransmissionLien
+					if ((paquet->code == 2)&&(nextPaquet->code==1))//Incrementation du tempsTransmissionLien
 					{
-						s->matriceStats[source][dest]->tempsTransmissionLien += nextPaquet->t - paquet->t;
+						s->matriceStats[lastPos][nextPaquet->pos]->tempsTransmissionLien += nextPaquet->t - paquet->t;
+						s->matriceStats[lastPos][nextPaquet->pos]->nombrePaquetsTraites++;
 					}
 				}
 			if(paquet->code==3)//Incrementation du delaiMoyenBoutEnBout
@@ -142,6 +146,7 @@ void ajoutListeEvenementStats(stats s,listeEvenement l)
 				s->matriceStats[source][dest]->delaiMoyenBoutEnBout += tempArriveePaquet - tempsCreationPaquet;
 			}
 			addEvenementStats(s,temp->e);
+			lastPos = paquet->pos;
 			temp=temp->next;
 		}
 
@@ -156,11 +161,10 @@ void addEvenementStats(stats s,evenement e)
 	switch(e->code) {
 		case 0:
 			{s->matriceStats[e->s][e->d]->nombrePaquetsEmis++;
-			s->matriceStats[e->s][e->d]->nombrePaquetsTraites++;
 			}
 		break;
 		case 1:
-		{s->matriceStats[e->pos][e->d]->nombrePaquetsTraites++;//On ajoute un paquet traité sur le lien entre la position actuelle et la dest
+		{;//On ajoute un paquet traité sur le lien entre la position actuelle et la dest
 		}
 		;
 		break;
