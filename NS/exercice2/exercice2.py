@@ -4,9 +4,9 @@ import sys
 import getopt
 import creationTcl as ct
 
-rtt1 = 5
-rtt2 = 5
-rtt3 = 5
+rtt1 = 1
+rtt2 = 10
+rtt3 = 100
 def main():
     fichier = open("exercice2.tcl","wb")
     ct.initialiseTcl(fichier)

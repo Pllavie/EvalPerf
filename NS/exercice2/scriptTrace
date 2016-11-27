@@ -9,10 +9,10 @@
 gnuplot <<- EOF
 	set xlabel "Temps (s)"
 	set ylabel "Taille file d'attente"
-	set title "Evolution de la cwnd (VEGAS)"
+	set title "Evolution de la cwnd"
 	set terminal png
 	set output "graph.png"
-	plot "congestion_control.data" using 1:2 with lines title 'Lien 0->5(rtt 5)',\
-	"congestion_control.data" using 1:3 with lines title 'Lien 1->5(rtt 5)',\
-	"congestion_control.data" using 1:4 with lines title 'Lien 2->5(rtt 5)'
+	plot "congestion_control.data" using 1:2 with lines title 'Lien 0->5(rtt 1)',\
+	"congestion_control.data" using 1:3 with lines title 'Lien 1->5(rtt 10)',\
+	"congestion_control.data" using 1:4 with lines title 'Lien 2->5(rtt 100)'
 	EOF
