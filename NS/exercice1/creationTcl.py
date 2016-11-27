@@ -41,26 +41,8 @@ def createLinkDuplexToCenter(fichier,noeudMin,noeudMax,centre):#Génere un lien 
     for i in range(noeudMin,noeudMax):
         createLinkDuplex(fichier,i,centre)
 
-"""
-#Create a UDP agent and attach it to node n0
-for { set i 0 } { $i < $nbNoeudMax } { incr i } {
-	set udp($i) [new Agent/UDP]
-	$ns attach-agent $n($i) $udp($i)
-}
-  set cbr($i) [new Application/Traffic/CBR]
-  $cbr($i) attach-agent $udp($i)
-  $cbr($i) set packetSize_ 500
-  $cbr($i) set interval_ 0.005
-
-
-$ns attach-agent $n($i) $udp($nbVal)
-    $ns attach-agent $n($j) $null($nbVal)
-
-
-$ns connect $udp($i) $null($i)
-  $ns at 0.2 "$cbr($i) start"
-  $ns at 3.0 "$cbr($i) stop"
-"""
+def showQueues(fichier,source,dest):
+	fichier.write("$ns duplex-link-op $n"+str(source)+" $n"+str(dest)+" queuePos 0.5\n")
 
 def createUdpAgent(fichier,indiceUdp,node):#Génére un agent udp et un cbr d'indice indiceUdp et l'attache au node node
 	fichier.write("set udp"+str(indiceUdp)+" [new Agent/UDP]\n")
@@ -76,10 +58,12 @@ def createNUdpAgent(fichier,nombreUdpAgent,node):#Génére de 0 à nombreUdpAgen
 	for i in range(nombreUdpAgent):
 		createUdpAgent(fichier,(str(node)+"_"+str(i)),node)
 
-def createConnect(fichier,source,puit,timerStart,timerStop):
-	fichier.write("$ns connect $udp"+str(source)+" $null"+str(puit)+"\n")
-	fichier.write("$ns at "+str(timerStart)+" \"$cbr"+str(source)+" start\"\n")
-	fichier.write("$ns at "+str(timerStop)+" \"$cbr"+str(source)+" stop\"\n")
+def createConnect(fichier,source,dest,timerStart,timerStop):
+	indiceUdpS = (str(source)+"_"+str(dest))
+	indiceUdpP = (str(dest)+"_"+str(source))
+	fichier.write("$ns connect $udp"+str(indiceUdpS)+" $null"+str(indiceUdpP)+"\n")
+	fichier.write("$ns at "+str(timerStart)+" \"$cbr"+str(indiceUdpS)+" start\"\n")
+	fichier.write("$ns at "+str(timerStop)+" \"$cbr"+str(indiceUdpS)+" stop\"\n")
 
 
 
