@@ -10,15 +10,14 @@ PROJECT = analyse
 TYPE = .out 
 BIN = $(PROJECT)$(TYPE)							
 DOUT = 											
-OBJS = main.o evenement.o  matriceStats.o statsLien.o listeEvenement.o analyseur.o listeListeEvenement.o argAnalyseur.o
+OBJS = main.o evenement.o  matriceStats.o statsLien.o listeEvenement.o analyseur.o listeListeEvenement.o argAnalyseur.o listeFlux.o noeud.o
 SRC =											
-DEPS = evenement.h matriceStats.h statsLien.h listeEvenement.h analyseur.h listeListeEvenement.h argAnalyseur.h
+DEPS = include/*.h
 CFLAGS = -W -Wall								
-LDFLAGS =										
 
 # Création de l'executable Out
 all: $(OBJS)
-	$(CC) $^ -o $(BIN) $(LDFLAGS) 
+	$(CC) $^ -o $(BIN) $(CFLAGS) 
 
 #Création des fichiers objets avec les fichiers c renseignés
 %.o: %.c $(DEPS)

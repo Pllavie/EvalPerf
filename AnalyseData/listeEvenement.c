@@ -1,14 +1,4 @@
-#include "listeEvenement.h"
-/*
-typedef struct listeEvenementStruct
-{
-	evenement e;
-	struct listeEvenementStruct *nxt;
-}*listeEvenement;
-
-
-
-*/
+#include "include/listeEvenement.h"
 
 listeEvenement newListeEvenement(){
 	return NULL;

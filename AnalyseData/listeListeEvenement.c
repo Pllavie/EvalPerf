@@ -1,37 +1,9 @@
-#include "listeListeEvenement.h"
-/*
-typedef struct listeListeEvenementStruct
-{
-	listeEvenement e;
-	struct listeListeEvenementStruct *next;
-}*listeListeEvenement;
-*/
-listeListeEvenement newListeListeEvenement(){
+#include "include/listeListeEvenement.h"
+
+Evenement newListeListeEvenement(){
 	return NULL;
 }
-/*
-listeEvenement addFinListeEvenement(listeEvenement l,evenement e)
-{
-	listeEvenement ajout = malloc(sizeof(struct listeEvenementStruct));
-	ajout->e = e;
-	ajout->next = NULL;
 
-	if (l==NULL)
-	{
-		return ajout;
-	}
-	else
-	{
-		listeEvenement temp = l;
-		while(temp->next!=NULL)
-		{
-			temp = temp->next;
-		}
-		temp->next = ajout;
-		return l;
-	}
-}
-*/
 listeListeEvenement addListeListeEvenement(listeListeEvenement l,evenement e)
 {
 	if(l==NULL)//La liste de liste est vide on doit donc crée une liste de liste avec pour élément une liste d'événement contenant e
@@ -101,7 +73,6 @@ void freeListeListeEvenement(listeListeEvenement l)
 
 listeListeEvenement freeListeEvenementPid(listeListeEvenement l,long pid)
 {
-	//printf("Libération liste");
 	listeListeEvenement temp = l;
 	listeListeEvenement tempNext;
 	if(temp==NULL)
@@ -136,7 +107,6 @@ listeListeEvenement freeListeEvenementPid(listeListeEvenement l,long pid)
 		free(tempNext);
 		return l;
 	}
-	printf("Libération liste");
 	}
 }
 
@@ -168,19 +138,3 @@ listeEvenement rechercheListeEvenement(listeListeEvenement l,long pid)
 		}
 	}
 }
-/*
-int main()
-{
-	evenement e = newEvenement(0.0,2,0,0,0,0,0);
-	evenement e2 = newEvenement(0.0,3,1,0,0,0,0);
-	evenement e3 = newEvenement(0.0,4,1,0,0,0,0);
-
-	listeListeEvenement a;
-	a = newListeListeEvenement();
-	a = addListeListeEvenement(a,e);
-	a = addListeListeEvenement(a,e2);
-	a = addListeListeEvenement(a,e3);
-	printListeListeEvenement(a);
-	freeListeListeEvenement(a);
-}
-*/

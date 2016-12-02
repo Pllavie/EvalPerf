@@ -1,15 +1,4 @@
-#include "matriceStats.h"
-/*
-typedef struct{
-	int nombreTotalPaquetsRecus;//Obtenu en parcourant la matrice
-	int nombreTotalPaquetsEmis;//Obtenu en parcourant la matrice
-	int nombreTotalPaquetsTraites;//Obtenu en parcourant la matrice
-	int NombreTotalPaquetsPerdus;//Obtenu en parcourant la matrice
-	int nombreDeFlux[10];//Initialisé à -1 , contient le numéro de chaque flux rencontré
-	float tauxDePerteTotal;
-	statsLien matriceStats[N][N];
-}*stats;
-*/
+#include "include/matriceStats.h"
 
 stats newStats()
 {
@@ -20,15 +9,13 @@ stats newStats()
 	res->nombreTotalPaquetsTraites = 0;
 	res->nombreTotalPaquetsPerdus = 0;
 	res->nombreDeFlux = 0;
-	res->minFid = 0;
-	res->maxFid = 0;
 	res->tauxDePerteTotal = -1 ;
 	for(i=0;i<N;i++)
 		{for(j=0;j<N;j++)
 		{
 			res->matriceStats[i][j] = newStatsLien(i,j);
 		}
-		res->localisationPertes[i]=-1;
+		res->infoNoeud[i]=newNoeud();
 	}
 	return res;
 }
@@ -37,35 +24,49 @@ void printStats(stats s,int verbose)
 {
 	int i,j;
 	int nombrePaquetsEmisNoeud;
-	int NombrePaquetsPerdusNoeud;
+	int nombrePaquetsPerdusNoeud;
+	int nombrePaquetsTraitesNoeud;
+	int nombrePaquetsRecusNoeud;
 	for(i=0;i<N;i++)
 	{
 		nombrePaquetsEmisNoeud = 0;
-		NombrePaquetsPerdusNoeud = 0;
+		nombrePaquetsPerdusNoeud = 0;
+		nombrePaquetsRecusNoeud = 0;
+		nombrePaquetsTraitesNoeud = 0;
 		for (j=0;j<N;j++)
 		{
 			if(verbose==1)
 			{
-				printf("\n\n");
 				printStatsLien(s->matriceStats[i][j]);
-				printf("\n\n");
 			}
 			s->nombreTotalPaquetsRecus+=s->matriceStats[i][j]->nombrePaquetsRecus;
 			s->nombreTotalPaquetsEmis+=s->matriceStats[i][j]->nombrePaquetsEmis;
 			s->nombreTotalPaquetsTraites+=s->matriceStats[i][j]->nombrePaquetsTraites;
 			s->nombreTotalPaquetsPerdus+=s->matriceStats[i][j]->NombrePaquetsPerdus;
 			nombrePaquetsEmisNoeud += s->matriceStats[i][j]->nombrePaquetsRecus;
-			NombrePaquetsPerdusNoeud += s->matriceStats[i][j]->NombrePaquetsPerdus;
+			nombrePaquetsPerdusNoeud += s->matriceStats[i][j]->NombrePaquetsPerdus;
+			nombrePaquetsTraitesNoeud += s->matriceStats[i][j]->nombrePaquetsTraites;
+			nombrePaquetsRecusNoeud += s->matriceStats[i][j]->nombrePaquetsRecus;
 		}
-		s->localisationPertes[i] = (float)NombrePaquetsPerdusNoeud/(float)nombrePaquetsEmisNoeud;
+		s->infoNoeud[i]->nombreTotalPaquetsPerdus = nombrePaquetsPerdusNoeud;
+		s->infoNoeud[i]->nombreTotalPaquetsEmis = nombrePaquetsEmisNoeud;
+		s->infoNoeud[i]->nombreTotalPaquetsTraites = nombrePaquetsTraitesNoeud;
+		s->infoNoeud[i]->nombreTotalPaquetsRecus = nombrePaquetsRecusNoeud;
 	}
-	s->nombreDeFlux = s->maxFid - s->minFid;
 	s->tauxDePerteTotal = (float)s->nombreTotalPaquetsPerdus/(float)s->nombreTotalPaquetsEmis;
 	printf("Stats Globales : nombreTotalPaquetsRecus : %d nombreTotalPaquetsEmis : %d nombreTotalPaquetsTraites : %d NombreTotalPaquetsPerdus : %d \n"
 		"nombreDeFlux : %d tauxDePerteTotal : %.4f\n",s->nombreTotalPaquetsRecus,s->nombreTotalPaquetsEmis,s->nombreTotalPaquetsTraites,
 		s->nombreTotalPaquetsPerdus,s->nombreDeFlux,s->tauxDePerteTotal);
+	if(verbose==1)
+	{
+		for(i=0;i<N;i++)
+		{
+		printf("Noeud %d ",i);
+		printStatsNoeud(s->infoNoeud[i]);
+		}
+	}
 
-	printf("Pourcentage de pertes (par ordre croissant)\n");
+	printf("\nLocalisation des pertes (par ordre croissant)\n");
 
 	for(i=0;i<N;i++)
 	{
@@ -73,14 +74,15 @@ void printStats(stats s,int verbose)
 		float perteMax = -1;
 		for(j=0;j<N;j++)
 		{
-			if (perteMax<s->localisationPertes[j])
+			if (perteMax<s->infoNoeud[j]->nombreTotalPaquetsPerdus)
 			{
 				indice = j;	
-				perteMax = s->localisationPertes[j];
+				perteMax = s->infoNoeud[j]->nombreTotalPaquetsPerdus;
 			}
 		}
-		printf("Noeud %d perte = %f\n",indice,perteMax);
-		s->localisationPertes[indice]=-1;
+		printf("Noeud %d Pourcentage des paquets perdus = %.2f \n"
+			,indice,perteMax/s->nombreTotalPaquetsPerdus);
+		s->infoNoeud[indice]->nombreTotalPaquetsPerdus=-1;
 }
 }
 
@@ -99,11 +101,12 @@ void freeStats(stats s)
 		{
 			freeStatsLien(s->matriceStats[i][j]);
 		}
+		freeNoeud(s->infoNoeud[i]);
 	}
 	free(s);
 }
 
-void ajoutListeEvenementStats(stats s,listeEvenement l)
+void ajoutListeEvenementStats(stats s,listeEvenement l,int tracagePaquetFlag)
 {
 	if (l==NULL)
 	{
@@ -127,6 +130,10 @@ void ajoutListeEvenementStats(stats s,listeEvenement l)
 		while(temp!=NULL)
 		{
 			evenement paquet = temp->e;
+			if(tracagePaquetFlag==1)
+			{
+				printEvenement(paquet);
+			}
 			if(temp->next!=NULL)
 				{
 					evenement nextPaquet = temp->next->e;
@@ -137,7 +144,6 @@ void ajoutListeEvenementStats(stats s,listeEvenement l)
 					if ((paquet->code == 2)&&(nextPaquet->code==1))//Incrementation du tempsTransmissionLien
 					{
 						s->matriceStats[lastPos][nextPaquet->pos]->tempsTransmissionLien += nextPaquet->t - paquet->t;
-						s->matriceStats[lastPos][nextPaquet->pos]->nombrePaquetsTraites++;
 					}
 				}
 			if(paquet->code==3)//Incrementation du delaiMoyenBoutEnBout
@@ -156,15 +162,14 @@ void ajoutListeEvenementStats(stats s,listeEvenement l)
 
 void addEvenementStats(stats s,evenement e)
 {
-	s->minFid = min(s->minFid,e->fid);
-	s->maxFid = max(s->maxFid,e->fid);
 	switch(e->code) {
-		case 0:
-			{s->matriceStats[e->s][e->d]->nombrePaquetsEmis++;
+		case 0:{s->matriceStats[e->s][e->d]->nombrePaquetsEmis++;
+				s->matriceStats[e->s][e->d]->nombrePaquetsTraites++;
 			}
 		break;
 		case 1:
-		{;//On ajoute un paquet traité sur le lien entre la position actuelle et la dest
+		{if (e->pos!=e->d)
+			{s->matriceStats[e->pos][e->d]->nombrePaquetsTraites++;}
 		}
 		;
 		break;

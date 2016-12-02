@@ -1,17 +1,4 @@
-#include "analyseur.h"
-
-long int tailleActuelleFenetre=0;
-long int tailleTotalle=0;
-long int nombreOccurences=0;
-long int tailleMaxFenetre=0;
-
-/*
-typedef struct analyseurStruct{
-	int option;
-	listeEvenement* fenetreEvenement;
-	stats stats;
-}*analyseur;
-*/
+#include "include/analyseur.h"
 
 analyseur newAnalyseur(int tailleFenetre)
 {
@@ -23,39 +10,36 @@ analyseur newAnalyseur(int tailleFenetre)
 	}
 	analyseur res = malloc(sizeof(struct analyseurStruct));
 	res->stats = newStats();
-	res->tailleFenetre = tailleFenetre;
+	res->tailleFenetre = tailleFenetre / 4;;
+	res->tailleFenetreFlux = tailleFenetre / 4;
 	res->fenetreEvenement = malloc(sizeof(struct listeListeEvenementStruct)*tailleFenetre);
+	res->fenetreFlux = malloc(sizeof(struct listeFluxStruct)*res->tailleFenetreFlux);
 	for(i=0;i<tailleFenetre;i++)
 	{
-		res->fenetreEvenement[i]=NULL;
+		res->fenetreEvenement[i]=newListeListeEvenement();
+	}
+	for(i=0;i<tailleFenetre/4;i++)
+	{
+		res->fenetreFlux[i]=newListeFlux();
 	}
 	return res;
 }
 
-void addEvenementAnalyseur(analyseur a,evenement e)
-//Supprimer le case NULL peut être
+void addEvenementAnalyseur(analyseur a,evenement e,int tracagePaquetFlag)
 {
 	int indiceTableau = e->pid%a->tailleFenetre;
-	//printf("indice tableau %d\n",indiceTableau );
 	listeListeEvenement liste =  a->fenetreEvenement[indiceTableau];
 	liste = addListeListeEvenement(liste,e);
 	a->fenetreEvenement[indiceTableau] = liste;
+	listeFlux listeFlux = a->fenetreFlux[((e->fid)%(a->tailleFenetreFlux))];
+	a->fenetreFlux[((e->fid)%(a->tailleFenetreFlux))] = listeFlux = addListeFlux(listeFlux,e->fid,a->stats);
 
 	if(e->code==3||e->code==4)
 	{
 		listeEvenement l = rechercheListeEvenement(liste,e->pid);
-		ajoutListeEvenementStats(a->stats,l);
+		ajoutListeEvenementStats(a->stats,l,tracagePaquetFlag);
 		a->fenetreEvenement[indiceTableau] = freeListeEvenementPid(a->fenetreEvenement[indiceTableau],e->pid);
-		tailleActuelleFenetre--;
 	}
-	else if (e->code==0)
-	{
-		tailleActuelleFenetre++;
-	}
-	tailleTotalle += tailleActuelleFenetre;
-	nombreOccurences++;
-	tailleMaxFenetre = max(tailleMaxFenetre,tailleActuelleFenetre);
-
 }
 
 void printAnalyseur(analyseur a,int verbose){
@@ -68,8 +52,6 @@ void printAnalyseur(analyseur a,int verbose){
 			printListeListeEvenement(a->fenetreEvenement[i]);
 		}
 	}
-	printf("Moyenne taille :%lf\n",(float)tailleTotalle/(float)nombreOccurences);
-	printf("Taille Max Fenetre %ld\n",tailleMaxFenetre);
 }
 
 void freeAnalyseur(analyseur a){
@@ -81,25 +63,15 @@ void freeAnalyseur(analyseur a){
 			freeListeListeEvenement(a->fenetreEvenement[i]);
 		}
 	}
+	for(i=0;i<a->tailleFenetreFlux;i++)
+	{
+		if(a->fenetreFlux[i]!=NULL)
+		{
+			freeListeFlux(a->fenetreFlux[i]);
+		}
+	}
+	free(a->fenetreFlux);
 	free(a->fenetreEvenement);
 	freeStats(a->stats);
 	free(a);
 }
-
-/*
-int main()
-{
-	analyseur a = newAnalyseur();
-	evenement e = newEvenement(0.0,2,0,0,0,0,0);
-	evenement e2 = newEvenement(0.0,3,1,0,0,0,0);
-	evenement e3 = newEvenement(0.0,4,2,0,0,0,0);
-
-addEvenementAnalyseur(a,e);	
-addEvenementAnalyseur(a,e2);
-addEvenementAnalyseur(a,e3);
-
-printAnalyseur(a,1);
-freeAnalyseur(a);
-
-}
-*/
