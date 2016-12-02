@@ -1,0 +1,12 @@
+#!/bin/bash
+
+gnuplot <<- EOF
+	set xlabel "Numéro du routeur"
+	set ylabel "Nombre de paquets détruits"
+	set title ""
+	set terminal png
+	set boxwidth 0.3
+	set style fill solid
+	set output "nombrePaquetsDetruitsRouteur.png"
+	plot "nombrePaquetsDetruitsRouteur.data" using 1:3:xtic(2) with boxes title 'Nombre de paquets détruits par routeur'
+	EOF

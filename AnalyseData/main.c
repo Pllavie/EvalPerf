@@ -16,14 +16,12 @@ unsigned long pid;
 evenement e;
 argAnalyseur argAnalyseur = newArgAnalyseur();
 char * usage = 
-  "Usage : ./analyse.out (Lance l'éxécutable avec une fenêtre de taille 1024 et verbose à false)\n"
-  "Usage : ./analyse.out -v (Lance l'éxécutable avec une fenêtre de taille 1024 et verbose à true)\n"
-  "Usage : ./analyse.out -s TAILLE_FENETRE (Lance l'éxécutable avec une fenêtre de taille TAILLE_FENETRE)\n"
-  "Commandes : -v : verbose -s TAILLE_FENETRE -f fichier\n"
+  "Usage : ./analyse.out -v -f 'trace2650.txt'(Lance l'éxécutable avec une fenêtre de taille 1024 et verbose à true)\n"
+  "Usage : ./analyse.out -s TAILLE_FENETRE -f 'trace2650.txt'(Lance l'éxécutable avec une fenêtre de taille TAILLE_FENETRE)\n"
+  "Usage : ./analyse.out -p PID -f 'trace2650.txt'\n"
+  "Commandes : -v : verbose -s TAILLE_FENETRE -f fichier -p pid\n"
   ;
-
 if (remplirArg(argAnalyseur,argc,argv)==-1){
-  printf("Erreur dans les options de l'analyseur : verboseFlag = %d tailleFenetre = %d \n",argAnalyseur->verboseFlag,argAnalyseur->tailleFenetre);
   printf("%s\n",usage);
   exit(-1);
 }
