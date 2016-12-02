@@ -1,6 +1,6 @@
 #include "include/listeListeEvenement.h"
 
-Evenement newListeListeEvenement(){
+listeListeEvenement newListeListeEvenement(){
 	return NULL;
 }
 

@@ -10,6 +10,7 @@ typedef struct argAnalyseurStruct{
   int verboseFlag;
   int tracagePaquetFlag;
   int tracagePaquetPid;
+  char * fichier;
 }*argAnalyseur;
 
 

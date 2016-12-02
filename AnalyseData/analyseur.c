@@ -10,15 +10,15 @@ analyseur newAnalyseur(int tailleFenetre)
 	}
 	analyseur res = malloc(sizeof(struct analyseurStruct));
 	res->stats = newStats();
-	res->tailleFenetre = tailleFenetre / 4;;
-	res->tailleFenetreFlux = tailleFenetre / 4;
+	res->tailleFenetre = tailleFenetre ;
+	res->tailleFenetreFlux = max(tailleFenetre / 4,1);
 	res->fenetreEvenement = malloc(sizeof(struct listeListeEvenementStruct)*tailleFenetre);
 	res->fenetreFlux = malloc(sizeof(struct listeFluxStruct)*res->tailleFenetreFlux);
-	for(i=0;i<tailleFenetre;i++)
+	for(i=0;i<res->tailleFenetre;i++)
 	{
 		res->fenetreEvenement[i]=newListeListeEvenement();
 	}
-	for(i=0;i<tailleFenetre/4;i++)
+	for(i=0;i<res->tailleFenetreFlux;i++)
 	{
 		res->fenetreFlux[i]=newListeFlux();
 	}

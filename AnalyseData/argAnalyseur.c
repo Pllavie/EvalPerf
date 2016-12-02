@@ -8,28 +8,26 @@ argAnalyseur newArgAnalyseur(){
 
 int remplirArg(argAnalyseur a,int argc, char **argv)
 {
-  int verboseFlag = 0;
-  int tracagePaquetFlag = 0;
-  int tracagePaquetPid = -1;
-  int fenetreValue = 0;
-  char * fichier=NULL;
+  char * fichier;
   int index;
   int c;
 
   opterr = 0;
 
-  while ((c = getopt (argc, argv, "vsp:")) != -1)
+  while ((c = getopt (argc, argv, "s:p:f:v")) != -1)
     switch (c)
       {
       case 'v':
-        verboseFlag = 1;
+        a->verboseFlag = 1;
         break;
       case 's':
-        fenetreValue = atoi(optarg);
+        a->tailleFenetre = atoi(optarg);
         break;
       case 'p':
-        tracagePaquetFlag = 1;
-        tracagePaquetPid = atoi(optarg);
+        a->tracagePaquetFlag = 1;
+        a->tracagePaquetPid = atoi(optarg);
+      case 'f':
+        a->fichier = optarg;
         break;
       case '?':
         if (optopt == 's'||optopt =='p')
@@ -46,11 +44,7 @@ int remplirArg(argAnalyseur a,int argc, char **argv)
   for (index = optind; index < argc; index++)
     {printf ("Non-option argument %s\n", argv[index]);return -1;}
   
-  a->tracagePaquetFlag = tracagePaquetFlag;
-  a->tracagePaquetPid = tracagePaquetPid;
-  a->verboseFlag = verboseFlag;
-  a->tailleFenetre = fenetreValue;
-  if (fenetreValue == 0)
+  if (a->tailleFenetre == 0)
   {
   	a->tailleFenetre = TAILLE_FENETRE_DEFAULT;
   }
@@ -59,6 +53,6 @@ int remplirArg(argAnalyseur a,int argc, char **argv)
 
 void printArgAnalyseur(argAnalyseur a)
 {
-printf ("verboseFlag = %d, fenetreValue = %d tracagePaquetFlag = %d tracagePaquetPid = %d\n"
-  ,a->verboseFlag, a->tailleFenetre,a->tracagePaquetFlag,a->tracagePaquetPid);
+printf ("verboseFlag = %d, fenetreValue = %d tracagePaquetFlag = %d tracagePaquetPid = %d fichier = %s\n"
+  ,a->verboseFlag, a->tailleFenetre,a->tracagePaquetFlag,a->tracagePaquetPid,a->fichier);
 }

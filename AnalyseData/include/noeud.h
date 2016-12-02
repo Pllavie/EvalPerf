@@ -8,8 +8,6 @@ typedef struct noeudStruct{
 	int nombreTotalPaquetsEmis;
 	int nombreTotalPaquetsTraites;
 	int nombreTotalPaquetsPerdus;
-	int tailleActuelleFileAttente;
-	int tailleMaxFileAttente;
 }*noeud;
 
 noeud newNoeud();

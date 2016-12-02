@@ -15,21 +15,28 @@ int i=0,code,so,d,fid,tos,bif,pos;
 unsigned long pid;
 evenement e;
 argAnalyseur argAnalyseur = newArgAnalyseur();
+char * usage = 
+  "Usage : ./analyse.out (Lance l'éxécutable avec une fenêtre de taille 1024 et verbose à false)\n"
+  "Usage : ./analyse.out -v (Lance l'éxécutable avec une fenêtre de taille 1024 et verbose à true)\n"
+  "Usage : ./analyse.out -s TAILLE_FENETRE (Lance l'éxécutable avec une fenêtre de taille TAILLE_FENETRE)\n"
+  "Commandes : -v : verbose -s TAILLE_FENETRE -f fichier\n"
+  ;
 
 if (remplirArg(argAnalyseur,argc,argv)==-1){
   printf("Erreur dans les options de l'analyseur : verboseFlag = %d tailleFenetre = %d \n",argAnalyseur->verboseFlag,argAnalyseur->tailleFenetre);
-  printf("Usage : ./analyse.out (Lance l'éxécutable avec une fenêtre de taille 1024 et verbose à false)\n");
-  printf("Usage : ./analyse.out -v (Lance l'éxécutable avec une fenêtre de taille 1024 et verbose à true)\n");
-  printf("Usage : ./analyse.out -s TAILLE_FENETRE (Lance l'éxécutable avec une fenêtre de taille TAILLE_FENETRE)\n");
-  printf("Commandes : -v : verbose -s TAILLE_FENETRE \n");
+  printf("%s\n",usage);
   exit(-1);
 }
 
 printArgAnalyseur(argAnalyseur);
 
-fp = fopen("trace2650.txt", "r");
+fp = fopen(argAnalyseur->fichier, "r");
 if (fp == NULL)
-	{exit(EXIT_FAILURE);}
+	{
+    printf("Impossible de lire le fichier %s\n",argAnalyseur->fichier);
+    printf("%s\n",usage);
+    exit(EXIT_FAILURE);
+  }
 
 if(argAnalyseur->tracagePaquetFlag==0)
 {
@@ -58,7 +65,7 @@ if(argAnalyseur->tracagePaquetFlag==0)
 
 if(argAnalyseur->tracagePaquetFlag==1)
 {
-  analyseur a = newAnalyseur(4);
+  analyseur a = newAnalyseur(1);
   while (fgets(buf, sizeof buf, fp) != NULL) 
   {
     if (sscanf(buf,"%f %d %ld %d %d %d N%d N%d N%d ", &t, &code, &pid,&fid,&tos,&bif,&so,&d,&pos) == 9)
@@ -80,9 +87,10 @@ if(argAnalyseur->tracagePaquetFlag==1)
     }
   else
    {freeEvenement(e);}
- freeAnalyseur(a);
   }
+  freeAnalyseur(a);
 }
+
 
 fclose(fp);
 free(argAnalyseur);
